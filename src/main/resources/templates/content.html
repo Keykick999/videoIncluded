@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 작성</title>
+    <link rel="stylesheet" href="content.css">
+</head>
+<body>
+
+<div class="content-form-container">
+    <h2>게시글 작성</h2>
+    <!-- enctype 속성 추가 -->
+    <form action="/addContent" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="title">제목:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="author">저자:</label>
+            <input type="text" id="author" name="author" required>
+        </div>
+        <div class="form-group">
+            <label for="context">내용:</label>
+            <textarea id="context" name="context" rows="5" required></textarea>
+        </div>
+        <!-- 비디오 파일 업로드 필드 추가 -->
+        <div class="form-group">
+            <label for="videoFile">비디오 파일:</label>
+            <input type="file" id="videoFile" name="video" accept="video/*">
+        </div>
+        <button type="submit">게시글 작성</button>
+    </form>
+</div>
+
+</body>
+</html>
