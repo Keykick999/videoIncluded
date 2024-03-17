@@ -2,12 +2,13 @@ package com.example.oldestVersion.controller;
 
 import com.example.oldestVersion.entity.Comment2;
 import com.example.oldestVersion.entity.Content2;
+import com.example.oldestVersion.entity.Reply;
 import com.example.oldestVersion.repository.CommentRepository;
 import com.example.oldestVersion.repository.ContentRepository;
+import com.example.oldestVersion.repository.ReplyRepository;
 import com.example.oldestVersion.service.ContentService;
 import com.example.oldestVersion.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -19,10 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -39,6 +38,9 @@ public class VideoController {
 
     @Autowired
     ContentRepository contentRepository;
+
+    @Autowired
+    ReplyRepository replyRepository;
 
     @Autowired
     ContentService contentService;
@@ -58,6 +60,9 @@ public class VideoController {
 
         Optional<Content2> findContent = contentRepository.findById(contentId);
         List<Comment2> commentList = commentRepository.findByContentId(contentId);
+        List<Reply> replyList = replyRepository.findByContentId(contentId);
+
+        System.out.println(replyList);
 
         //접속 -> 조회수+=1;
         Content2 targetContent = findContent.get();
@@ -67,6 +72,7 @@ public class VideoController {
 
         model.addAttribute("content",findContent.get());
         model.addAttribute("comments",commentList);
+        model.addAttribute("replies",replyList);
         return "video";
     }
 
@@ -78,6 +84,21 @@ public class VideoController {
             System.out.println(contentId);
             System.out.println(comment);
             commentRepository.save(new Comment2(comment,"brian1205",contentId));
+        return "redirect:/video/" + contentId;
+    }
+
+
+
+    //대댓글 저장
+    @PostMapping("/reply/add")
+    public String addReply(@RequestParam("commentId") Long commentId,
+                           @RequestParam("replyText") String text,
+                           @RequestParam("contentId") Long contentId) {
+        System.out.println("commentId = " + commentId);
+        System.out.println("text = " + text);
+        System.out.println("contentId = " + contentId);
+        //대댓글 저장
+        replyRepository.save(new Reply(text,"member1",contentId, commentId));
         return "redirect:/video/" + contentId;
     }
 
@@ -96,10 +117,10 @@ public class VideoController {
                                  @RequestParam("context") String context,
                                  @RequestParam("author") String author,
                                  @RequestParam("video") MultipartFile file) {
-        String encodedFilename = videoService.uploadVideo(file);
-        contentRepository.save(new Content2(title,author,context,encodedFilename,0));
-        if(encodedFilename != null){
-            return "redirect:/showVideo/" + encodedFilename;
+        String filePath = videoService.uploadVideo(file);
+        contentRepository.save(new Content2(title,author,context,filePath,0));
+        if(filePath != null){
+            return "redirect:/showVideo/" + filePath;
 
         } else{
             return "redirect:/uploadFailure.html";
@@ -211,4 +232,7 @@ public class VideoController {
         model.addAttribute("videoUrl",url);
         return "showVideo";
     }
+
+
+
 }

@@ -3,17 +3,25 @@ package com.example.oldestVersion.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "content2", indexes = {
+        @Index(name = "idx_id", columnList = "id"),
+        @Index(name = "idx_context", columnList = "context"),
+        @Index(name = "idx_videoId", columnList = "videoId"),
+        @Index(name = "idx_author", columnList = "author"),
+        @Index(name = "idx_title", columnList = "title"),
+        @Index(name = "idx_views", columnList = "views")
+})
 public class Content2 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+    @Column(nullable = false)
     private String title;
-    @Column
+    @Column(nullable = false)
     private String author;
-    @Column
+    @Column(nullable = false)
     private String context;
-    @Column
+    @Column(nullable = false, unique = true)
     private String videoId;
     @Column
     private int views;
@@ -21,6 +29,15 @@ public class Content2 {
     public Content2(){}
 
     public Content2(String title, String author, String context, String videoId, int view) {
+        this.title = title;
+        this.author = author;
+        this.context = context;
+        this.videoId = videoId;
+        this.views = views;
+    }
+
+    public Content2(Long id, String title, String author, String context, String videoId, int views) {
+        this.id = id;
         this.title = title;
         this.author = author;
         this.context = context;

@@ -20,7 +20,7 @@
 
     <!--로컬 영상 재생-->
     <video width="640" height="360" controls>
-        <source th:src="@{'/videos/' + *{videoId}}" type="video/mp4">
+        <source th:src="@{/uploads/{videoName}(videoName=${videoId})}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
@@ -36,9 +36,28 @@
             <!-- content의 id 값을 hidden input으로 추가 -->
             <input type="hidden" name="contentId" th:value="*{id}">
         </form>
-        <ul>
-            <li th:each="comment : ${comments}" th:text="${comment.text}">댓글 예시</li>
-        </ul>
+
+        <!-- 댓글을 반복하는 부분 내부에 대댓글 폼 추가 -->
+        <div th:each="comment : ${comments}">
+            <div th:text="${comment.text}">댓글 내용</div>
+            <!-- 대댓글 폼 -->
+            <form action="/reply/add" method="post">
+                <input type="text" name="replyText" placeholder="대댓글을 입력하세요" required>
+                <!-- 댓글 ID -->
+                <input type="hidden" name="commentId" th:value="${comment.id}" />
+                <!-- 원본 컨텐츠 ID -->
+                <input type="hidden" name="contentId" th:value="${content.id}" />
+                <button type="submit">대댓글 추가</button>
+            </form>
+            <!-- 대댓글 목록 -->
+            <ul>
+                <li th:each="reply : ${replies}" th:if="${reply.commentId == comment.id}" th:text="${reply.text}">
+                    <!-- 대댓글 내용 -->
+                </li>
+            </ul>
+        </div>
+
+
     </div>
 
 </div>

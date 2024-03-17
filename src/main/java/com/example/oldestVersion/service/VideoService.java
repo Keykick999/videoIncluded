@@ -38,7 +38,7 @@ public class VideoService {
 
                 // URL 인코딩
                 String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8.toString());
-                return encodedFilename;
+                return filePath.toString();
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;

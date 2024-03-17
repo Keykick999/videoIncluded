@@ -3,18 +3,23 @@ package com.example.oldestVersion.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "member", indexes = {
+        @Index(name = "idx_member_id", columnList = "id"),
+        @Index(name = "idx_member_email", columnList = "email"),
+        @Index(name = "idx_member_phone", columnList = "phone"),
+})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
-    @Column
+    @Column(nullable = false, unique = true)
     private String email;
-    @Column
+    @Column(nullable = false, unique = true)
     private String phone;
-    @Column
+    @Column(nullable = false)
     private String password;
 
     public Users(){}
